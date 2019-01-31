@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kubeproject-v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kubeproject-v1
+        version: v1
+    spec:
+      containers:
+      - name: kubeproject-v1
+        image: DOCKER_REGISTRY/TENANCY/circleci-demo-docker:IMG_TAG
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubeproject-v1
+  labels:
+    app: kubeproject-v1
+spec:
+  ports:
+  - port: 8080
+    targetPort: 3000
+  selector:
+    app: kubeproject-v1
+  type: LoadBalancer
